@@ -9,20 +9,13 @@
         <version>1.1.0</version>
     </parent>
 
-    <artifactId>ucenter</artifactId>
+    <artifactId>core</artifactId>
+    <groupId>com.core</groupId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.core</groupId>
-            <artifactId>core</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-    </dependencies>
 
 </project>
