@@ -1,0 +1,57 @@
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+    include-message: always
+  compression:
+    enabled: true  # Enables response compression.
+    min-response-size: 1024  # Specifies the minimum response size in bytes for compression to be applied.
+    mime-types: # Specifies the MIME types for which compression will be applied.
+      - application/javascript
+      - application/json
+      - application/xml
+      - text/html
+      - text/xml
+      - text/plain
+      - text/css
+      - image/*  # Compression will be applied to all image MIME types.
+
+#tomcat
+  tomcat:
+    max-swallow-size: -1 # Configures the maximum size in bytes of the request body that Tomcat will swallow for a failed request. A value of -1 means unlimited.
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/quickpay?allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  #json timestamp unified conversion
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Yangon
+#  Set static file path, js, css, etc.
+  mvc:
+    static-path-pattern: /**
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/public/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics,httptrace

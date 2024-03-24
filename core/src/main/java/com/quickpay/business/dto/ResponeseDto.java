@@ -1,4 +1,4 @@
-package com.quickpay.business.vo;
+package com.quickpay.business.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
