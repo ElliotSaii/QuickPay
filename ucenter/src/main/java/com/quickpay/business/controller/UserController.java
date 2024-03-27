@@ -42,6 +42,7 @@ public class UserController {
     public ResponeseDto<Object> login(@RequestParam("otp") String otp){
         ResponeseDto<Object> responeseDto = new ResponeseDto<>();
         userService.doLogin(otp);
+
         responeseDto.setMsg("Login Successfully");
         responeseDto.setSuccess(true);
         responeseDto.setCode(HttpStatus.OK.value());
@@ -51,8 +52,8 @@ public class UserController {
     @PostMapping(value = "/req/phone/otp")
     public ResponeseDto<Map<String, String>> getOtpByPhone(@RequestParam("phone") String phone){
      String otp =   userService.getOtpByPhone(phone);
-        Map<String, String> map =new HashMap<>();
-        map.put("otp", otp);
+    Map<String, String> map =new HashMap<>();
+    map.put("otp", otp);
      return  ResponeseDto.success(map);
     }
 }

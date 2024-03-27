@@ -2,22 +2,25 @@ package com.quickpay.business.service.impl;
 import com.quickpay.business.entity.User;
 import com.quickpay.business.repository.UserRepository;
 import com.quickpay.business.service.UserService;
-import com.quickpay.business.vo.LoginVo;
 import com.quickpay.business.vo.RegisterVo;
+import com.quickpay.commons.exceptions.AuthorizeException;
 import com.quickpay.commons.exceptions.BusinessException;
+import com.quickpay.commons.manager.CacheManager;
+import com.quickpay.commons.utils.CacheUtils;
+import com.quickpay.commons.utils.RandomUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService {
     private  final UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
+    private final CacheManager cacheManager;
+    public UserServiceImpl(UserRepository userRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -27,8 +30,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void doLogin(String otp) {
-        //todo check otp from redis db
-
+      boolean isValidated = cacheManager.isValidPhoneOtp(otp);
+      if(!isValidated){
+          throw new AuthorizeException(HttpStatus.UNAUTHORIZED.value(), "Unauthorized user");
+      }
+      
     }
 
     @Override
@@ -37,13 +43,9 @@ public class UserServiceImpl implements UserService {
         if(user == null){
             throw new BusinessException("no associated with this phone "+phone);
         }
-        //todo generate actual otp and store them in redis db expire in 1 min
-
-        Random rnd = new Random();
-        int number = rnd.nextInt(999999);
-
-        // this will convert any number sequence into 6 character.
-        return String.format("%06d", number);
+        String otp = RandomUtils.randomNum(6);
+        cacheManager.cacheOtp(otp);
+        return  otp;
 
     }
 

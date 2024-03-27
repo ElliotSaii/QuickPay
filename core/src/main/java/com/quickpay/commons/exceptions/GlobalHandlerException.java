@@ -1,6 +1,8 @@
 package com.quickpay.commons.exceptions;
 
 import com.quickpay.business.dto.ResponeseDto;
+import com.quickpay.commons.context.ContextKey;
+import com.quickpay.commons.context.ThreadContext;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +66,15 @@ public class GlobalHandlerException {
     public ResponeseDto<?> handleMissingParameter(HttpServletRequest req, MissingServletRequestParameterException ex){
         log.error(">>{} missing parameter {}",req.getRequestURI(), ex.getParameterName());
         return ResponeseDto.fail(HttpStatus.BAD_REQUEST.value(), "missing parameter "+ex.getParameterName());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthorizeException.class)
+    public ResponeseDto<?> handleAuthorizeException(HttpServletRequest req , AuthorizeException ex){
+        log.warn(">> ip: {} unauthorized request to {}", ThreadContext.get(ContextKey.CLIENT_IP), req
+                .getRequestURI());
+
+        return ResponeseDto.fail(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

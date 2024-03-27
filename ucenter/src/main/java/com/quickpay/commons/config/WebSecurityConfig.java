@@ -15,7 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    public static final String[]openApi = {"/api/test/**","/api/user/req/phone/otp", "/api/user/register"};
+    public static final String[]openApi = {"/api/test/**","/api/user/req/phone/otp", "/api/user/register"
+    ,"/api/user/login"};
 
 
     @Autowired

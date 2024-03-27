@@ -2,7 +2,8 @@ package com.quickpay.business.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.quickpay.commons.constant.ConstantVariable;
+
+import com.quickpay.commons.constant.ConstantKeys;
 import lombok.Data;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,9 +22,9 @@ public class ResponeseDto<T> {
     public static <T> ResponeseDto<T> success(T data){
         ResponeseDto<T> result = new ResponeseDto<>();
         result.setSuccess(true);
-        result.setCode(ConstantVariable.OK_200);
+        result.setCode(ConstantKeys.OK_200);
         result.setData(data);
-        result.setMsg(ConstantVariable.OPERATION_SUCCESS);
+        result.setMsg(ConstantKeys.OPERATION_SUCCESS);
         return  result;
     }
     public static ResponeseDto<Object> fail(String errMsg){

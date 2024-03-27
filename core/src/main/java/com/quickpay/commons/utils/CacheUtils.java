@@ -1,5 +1,8 @@
 package com.quickpay.commons.utils;
 import com.quickpay.commons.constant.CacheKeys;
+import com.quickpay.commons.constant.ConstantKeys;
+import com.quickpay.commons.exceptions.AuthorizeException;
+import com.quickpay.commons.exceptions.BusinessException;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -7,12 +10,14 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 
-public class AccLoginUtils {
+public class CacheUtils {
     private static RedissonClient redissonClient;
     private static final long PWDFAIL_PER_MINUTES = 30L;
     private static final long PWDFAIL_LIMIT = 5;
+    private static final long PHONE_LOGIN_OTP_PER_MINUTES = 1;
     private static final long APP_TOKEN_EXPIRE_MINUTES = 2 * 24 * 60L;
     private static final String TOKEN_REGEX = "^[0-9a-zA-Z]{32}$";
+
 
 
     public static void removePwdFailCount(String account) {
@@ -66,6 +71,12 @@ public class AccLoginUtils {
     }
 
 
+    public static void cacheOtp(String otp){
+        String key = CacheKeys.PHONE_LOGIN_OTP + otp;
+        getRedissonClient().getBucket(key).setIfExists(
+                key, Duration.ofMinutes(PHONE_LOGIN_OTP_PER_MINUTES));
+
+    }
 
     public static boolean isBlackIp(String ip) {
         return getRedissonClient().getBucket(CacheKeys.BLACK_IP + ip).isExists();
@@ -74,10 +85,24 @@ public class AccLoginUtils {
 
     private static RedissonClient getRedissonClient(){
         if (redissonClient != null) return redissonClient;
-        synchronized (AccLoginUtils.class){
+        synchronized (CacheUtils.class){
             if (redissonClient != null) return redissonClient;
             redissonClient = SpringContextUtils.getBean(RedissonClient.class);
         }
         return  redissonClient;
+    }
+
+    public static boolean isValidPhoneOtp(String otp) {
+        RBucket<Object> bucket = getRedissonClient().getBucket(CacheKeys.PHONE_LOGIN_OTP);
+        if(!bucket.isExists()){
+            return false;
+        }
+        String cachedOtp = (String) bucket.get();
+        boolean isOtpCodeEquals = org.apache.commons.lang3.StringUtils.equals(otp, cachedOtp);
+        if(!isOtpCodeEquals){
+            return false;
+        }
+        return true;
+
     }
 }

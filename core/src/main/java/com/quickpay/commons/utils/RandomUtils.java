@@ -29,9 +29,9 @@ public class RandomUtils {
 
     static SecureRandom getNativeInstance() {
         try {
-            return SecureRandom.getInstance("NativePRNGNonBlocking");
+            return SecureRandom.getInstance("SHA1PRNG"); //NativePRNGNonBlocking
         } catch (final NoSuchAlgorithmException e) {
-            log.warn(e.toString());
+            log.warn("SHA1PRNG algorithm not available. Falling back to default SecureRandom.", e);
             return new SecureRandom();
         }
     }
@@ -136,6 +136,7 @@ public class RandomUtils {
         RANDOMIZER.nextBytes(randomBytes);
         return randomBytes;
     }
+
 
 
 
